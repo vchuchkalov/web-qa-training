@@ -16,10 +16,8 @@ public class BaseRunner {
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
     }
 
-
     @After
     public void tearDown() {
         driver.quit();
     }
-
 }
