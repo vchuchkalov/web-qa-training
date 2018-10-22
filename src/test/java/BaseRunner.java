@@ -6,21 +6,39 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class BaseRunner {
+    private static ThreadLocal<WebDriver> tl = new ThreadLocal<>();
     WebDriver driver;
-    public String browserName = System.getProperty("browser");
+    private String browserName = System.getProperty("browser");
     String baseUrl;
 
+//    @Before
+//    public void setUp() {
+//        driver = getDriver();
+//        driver.manage().window().maximize();
+//        baseUrl = "https://moscow-job.tinkoff.ru/";
+//        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+//    }
+
     @Before
-    public void setUp() {
-        driver = getDriver();
+    public void setUp(){
+        if (tl.get() != null) {
+            driver = tl.get();
+        } else {
+            driver = getDriver();
+            tl.set(driver);
+        }
         driver.manage().window().maximize();
         baseUrl = "https://moscow-job.tinkoff.ru/";
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            driver.quit();
+            driver = null;
+        }));
     }
 
     @After
     public void tearDown() {
-        driver.quit();
+//        driver.quit();
     }
 
     private WebDriver getDriver() {
