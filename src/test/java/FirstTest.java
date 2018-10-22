@@ -1,35 +1,30 @@
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.edge.EdgeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.By;
 
-import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.assertEquals;
-public class FirstTest {
-    private WebDriver driver;
-    private String baseUrl;
-    @Before
-    public void setUp() {
-        driver = new ChromeDriver();
-        baseUrl = "https://moscow-job.tinkoff.ru/";
-        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-    }
+
+public class FirstTest extends BaseRunner {
+
     @Test
-    public void testFirst() throws InterruptedException {
+    public void testFirst() {
         driver.get(baseUrl);
         driver.findElement(By.name("fio")).click();
-        driver.findElement(By.name("fio")).clear();
-        driver.findElement(By.name("fio")).sendKeys("Иван");
-        driver.findElement(By.name("email")).sendKeys(Keys.TAB);
-        driver.findElement(By.xpath("(.//*[normalize-space(text()) and normalize-space(.)='обработку личных данных'])[1]/following::div[2]")).click();
-        assertEquals("Недостаточно информации. Введите фамилию, имя и отчество через пробел (Например: Иванов Иван Алексеевич)", driver.findElement(By.xpath("(.//*[normalize-space(text()) and normalize-space(.)='Фамилия, имя и отчество'])[1]/following::div[3]")).getText());
-    }
-    @After
-    public void tearDown() {
-        driver.quit();
+        driver.findElement(By.name("email")).click();
+        driver.findElement(By.name("phone")).click();
+        driver.findElement(By.name("city")).click();
+        driver.findElement(By.cssSelector(".SelectItem__placeholder_3_ypX")).click();
+        driver.findElement(By.cssSelector("div.SelectItem__contentWrapper_3eEeN")).click();
+        driver.findElement(By.cssSelector(".FormField__lastRow_18MZF:nth-child(2)")).click();
+
+        assertEquals("Поле обязательное", driver
+                .findElement(By.cssSelector("div.Error__errorMessage_q8BBY")).getText());
+        assertEquals("Поле обязательное", driver
+                .findElement(By.cssSelector(".Row__row_AjrJL:nth-child(2) > .FormField__field_1iwkM:nth-child(1) > .Error__errorMessage_q8BBY")).getText());
+        assertEquals("Необходимо указать номер телефона", driver
+                .findElement(By.cssSelector(".FormField__field_1iwkM:nth-child(2) > .Error__errorMessage_q8BBY")).getText());
+        assertEquals("Поле обязательное", driver
+                .findElement(By.cssSelector(".Row__row_AjrJL:nth-child(3) .Error__errorMessage_q8BBY")).getText());
+        assertEquals("Поле обязательное", driver
+                .findElement(By.cssSelector(".Row__row_AjrJL:nth-child(4) .Error__errorMessage_q8BBY")).getText());
     }
 }
