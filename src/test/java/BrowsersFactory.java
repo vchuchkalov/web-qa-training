@@ -28,7 +28,7 @@ public enum  BrowsersFactory {
             updateProperty("firefox");
             //Disable login to console and redirect log to an external file
             System.setProperty(FirefoxDriver.SystemProperty.DRIVER_USE_MARIONETTE, "true");
-            System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE, "./src/test/java/log");
+            System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE, "./src/test/java/firefox_logs/log");
 
             FirefoxOptions options = new FirefoxOptions();
             options.addPreference("dom.webnotifications.enabled", false);

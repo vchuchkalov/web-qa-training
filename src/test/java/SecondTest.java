@@ -4,11 +4,11 @@ import org.openqa.selenium.Keys;
 
 import static org.junit.Assert.assertEquals;
 
-public class FirstTest extends BaseRunner {
+public class SecondTest extends BaseRunner {
 
     @Test
     public void test1() {
-        System.out.println("FirstTest, test 1");
+        System.out.println("SecondTest, test 1");
         driver.get(baseUrl);
         driver.findElement(By.name("fio")).click();
         driver.findElement(By.name("email")).click();
@@ -32,7 +32,7 @@ public class FirstTest extends BaseRunner {
 
     @Test
     public void test2() {
-        System.out.println("FirstTest, test 2");
+        System.out.println("SecondTest, test 2");
         driver.get(baseUrl);
         driver.findElement(By.name("fio")).sendKeys(Keys.ENTER);
         driver.findElement(By.name("email")).sendKeys(Keys.ENTER);
@@ -52,24 +52,5 @@ public class FirstTest extends BaseRunner {
                 .findElement(By.cssSelector(".Row__row_AjrJL:nth-child(3) .Error__errorMessage_q8BBY")).getText());
         assertEquals("Поле обязательное", driver
                 .findElement(By.cssSelector(".Row__row_AjrJL:nth-child(4) .Error__errorMessage_q8BBY")).getText());
-    }
-
-    @Test
-    public void test3() {
-        System.out.println("FirstTest, test 3");
-        driver.get(baseUrl);
-        driver.findElement(By.name("fio")).sendKeys(Keys.ENTER);
-        driver.findElement(By.name("email")).sendKeys(Keys.ENTER);
-        driver.findElement(By.name("phone")).sendKeys(Keys.ENTER);
-        driver.findElement(By.name("city")).sendKeys(Keys.ENTER);
-
-        assertEquals("Поле обязательное", driver
-                .findElement(By.cssSelector("div.Error__errorMessage_q8BBY")).getText());
-        assertEquals("Поле обязательное", driver
-                .findElement(By.cssSelector(".Row__row_AjrJL:nth-child(2) > .FormField__field_1iwkM:nth-child(1) > .Error__errorMessage_q8BBY")).getText());
-        assertEquals("Необходимо указать номер телефона", driver
-                .findElement(By.cssSelector(".FormField__field_1iwkM:nth-child(2) > .Error__errorMessage_q8BBY")).getText());
-        assertEquals("Поле обязательное", driver
-                .findElement(By.cssSelector(".Row__row_AjrJL:nth-child(3) .Error__errorMessage_q8BBY")).getText());
     }
 }
