@@ -1,0 +1,35 @@
+*.class
+           *.iml
+           # Package Files #
+           *.jar
+           *.war
+           *.ear
+           *.zip
+           *.pydevproject
+           .project
+           .metadata
+           target/
+           bin/**
+           tmp/**
+           tmp/**/*
+           *.tmp
+           *.bak
+           *.log
+           local.properties
+           .classpath
+           .settings/
+           .loadpath
+           # Locally stored "Eclipse launch configurations"
+           *.launch
+           .idea/
+           .idea/libraries
+           .idea/workspace.xml
+           .settings/
+           .svn/
+           *.classpath
+           *.project
+           *.settings
+           /src/test/java/stories
+           .src/test/java/stories
+           /.gitignore
+           /java-docs/.idea/*
