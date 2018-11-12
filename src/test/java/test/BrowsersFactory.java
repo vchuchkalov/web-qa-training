@@ -1,3 +1,5 @@
+package test;
+
 import com.google.common.io.Files;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -46,7 +48,7 @@ public class BrowsersFactory {
         }
     }
 
-    static WebDriver buildDriver(String browserName) {
+    public static WebDriver buildDriver(String browserName) {
         switch (browserName) {
 
             case "chrome_invisible":
