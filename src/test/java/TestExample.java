@@ -1,15 +1,23 @@
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.logging.LogEntry;
+import org.openqa.selenium.logging.LogType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TestExample extends BaseRunner {
 
     Logger logger = LoggerFactory.getLogger(TestExample.class);
+
     @Test
     public void test1() {
         // создаем wait на 10 секунд
@@ -62,6 +70,13 @@ public class TestExample extends BaseRunner {
                     return true;
                 });
 
+        driver.get("https://www.tinkoff.ru/career/vacancies/");
+        wait.until(d -> d.getTitle().equals("Вакансии"));
+
+        String surname = "Иванова";
+        driver.findElement(By.name("name")).sendKeys(surname);
+        wait.until(d -> checkPopularNameRequest(surname));
+
         //закрываем активную вкладку
         driver.close();
         logger.info("Закрыта активная вкладка");
@@ -97,5 +112,38 @@ public class TestExample extends BaseRunner {
     private List<WebElement> xpathSearcherByText(String searchText) {
         String xpath = String.format("//*[contains(text(),'%s')]", searchText);
         return driver.findElements(By.xpath(xpath));
+    }
+
+    private boolean checkPopularNameRequest(String surname) {
+        boolean match = false;
+        String messageResponse;
+        String response;
+        List<String> responseList = new ArrayList<>();
+        for (LogEntry entry : driver.manage().logs().get(LogType.PERFORMANCE)) {
+            messageResponse = entry.getMessage();
+            if (messageResponse.contains("get_popular_names") && messageResponse.contains("requestWillBeSent")) {
+                JSONObject jsonObject;
+                try {
+                    jsonObject = new JSONObject(messageResponse);
+                    response = jsonObject.getJSONObject("message").getJSONObject("params").getJSONObject("request").get("postData").toString();
+                    response = URLDecoder.decode(response, "UTF-8");
+                    logger.info(response);
+                    responseList.add(response);
+                } catch (JSONException e) {
+                    logger.error("JSONException: Ошибка преобразования JSON объекта, для получения параметров операции", e);
+                } catch (UnsupportedEncodingException e) {
+                    logger.error("UnsupportedEncodingException: Ошибка преобразования строки в utf-8", e);
+                } catch (NullPointerException e) {
+                    logger.error("NullPointerException: Метод get_popular_names не выполнился", e);
+                }
+            }
+        }
+        for (String res : responseList) {
+            if (res.contains(surname)) {
+                match = true;
+                break;
+            }
+        }
+        return match;
     }
 }
