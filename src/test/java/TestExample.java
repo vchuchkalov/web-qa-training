@@ -1,7 +1,6 @@
 import org.junit.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.List;
@@ -11,7 +10,6 @@ public class TestExample extends BaseRunner {
     @Test
     public void test1() {
         // создаем wait на 10 секунд
-        WebDriverWait wait = new WebDriverWait(driver, 10);
         driver.get("https://www.google.ru/");
         driver.findElement(By.name("q")).sendKeys("Тинькофф работа в москве");
         driver.findElements(By.xpath("//ul[@role='listbox']/li"));
@@ -36,7 +34,7 @@ public class TestExample extends BaseRunner {
                 });
 
 
-        String tinkoffJobLink = "tinkoff.ru/вакансии";
+        String tinkoffJobLink = "rabota.tinkoff.ru";
 
         wait.until(d -> xpathSearcherByText(tinkoffJobLink).size() > 0);
         xpathSearcherByText(tinkoffJobLink).get(0).click();
@@ -54,7 +52,7 @@ public class TestExample extends BaseRunner {
 
         //Заполняем форму максиально быстро, пытаясь игнорировать анимацию страницы
         wait.ignoring(StaleElementReferenceException.class)
-            .ignoring(ElementNotInteractableException.class)
+                .ignoring(ElementNotInteractableException.class)
                 .until(d -> {
                     driver.findElement(By.name("name")).sendKeys("Иванов Иван Иванович");
                     driver.findElement(By.name("email")).click();

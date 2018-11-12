@@ -1,58 +1,41 @@
+
 import org.junit.After;
 import org.junit.Before;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.events.EventFiringWebDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-public class BaseRunner {
-    private static ThreadLocal<WebDriver> tl = new ThreadLocal<>();
-    WebDriver driver;
-    private String browserName = System.getProperty("browser");
-    String baseUrl;
 
-//    @Before
-//    public void setUp() {
-//        driver = getDriver();
-//        driver.manage().window().maximize();
-//        baseUrl = "https://moscow-job.tinkoff.ru/";
-//        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-//    }
+/**
+ * Created by Иван on 17.03.2018.
+ */
+public class BaseRunner {
+
+    public static ThreadLocal<WebDriver> threadLocal = new ThreadLocal<>();
+    public WebDriver driver;
+    public WebDriverWait wait;
+    public final String browserName = System.getProperty("browser") == null ? "chrome" : System.getProperty("browser");
 
     @Before
-    public void setUp(){
-        if (tl.get() != null) {
-            driver = tl.get();
-        } else {
-            driver = getDriver();
-            tl.set(driver);
-        }
+    public void start() {
+        threadLocal = new ThreadLocal<>();
+        driver = new EventFiringWebDriver(getDriver());
+        ((EventFiringWebDriver) driver).register(new BrowsersFactory.MyListener());
+        threadLocal.set(driver);
+        wait = new WebDriverWait(driver, 10);
+        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         driver.manage().window().maximize();
-        baseUrl = "https://moscow-job.tinkoff.ru/";
-        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            driver.quit();
-            driver = null;
-        }));
     }
 
     @After
     public void tearDown() {
-//        driver.quit();
+        driver.quit();
+        threadLocal.remove();
     }
 
     private WebDriver getDriver() {
-        try {
-            BrowsersFactory.valueOf(System.getProperty("browser"));
-        } catch (NullPointerException | IllegalArgumentException e) {
-            browserName = randomBrowserPicker();
-            System.setProperty("browser", browserName);
-        }
-        return BrowsersFactory.valueOf(browserName).create();
-    }
-    private String randomBrowserPicker() {
-        System.out.println("\nThe driver is not set. Running a random browser...");
-        int pick = new Random().nextInt(BrowsersFactory.values().length);
-        return BrowsersFactory.values()[pick].toString();
+        return BrowsersFactory.buildDriver(browserName);
     }
 }
