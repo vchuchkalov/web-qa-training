@@ -1,12 +1,15 @@
 import org.junit.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.List;
 
 public class TestExample extends BaseRunner {
 
+    Logger logger = LoggerFactory.getLogger(TestExample.class);
     @Test
     public void test1() {
         // создаем wait на 10 секунд
@@ -61,6 +64,7 @@ public class TestExample extends BaseRunner {
 
         //закрываем активную вкладку
         driver.close();
+        logger.info("Закрыта активная вкладка");
 
         //переключаемся к первой попавшейся вкладке (а у нас она теперь одна)
         driver.switchTo().window(driver.getWindowHandles().iterator().next());

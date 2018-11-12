@@ -8,20 +8,24 @@ import org.openqa.selenium.support.events.AbstractWebDriverEventListener;
 
 import java.io.File;
 import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class BrowsersFactory {
 
     public static class MyListener extends AbstractWebDriverEventListener {
 
+        Logger logger = LoggerFactory.getLogger(BrowsersFactory.class);
+
         @Override
         public void beforeFindBy(By by, WebElement element, WebDriver driver) {
-            System.out.println("Обращение к элементу " + by);
+            logger.info("Обращение к элементу " + by);
         }
 
         @Override
         public void afterFindBy(By by, WebElement element, WebDriver driver) {
-            System.out.println("Найден элемент " + by);
+            logger.info("Найден элемент " + by);
         }
 
         @Override
@@ -33,7 +37,7 @@ public class BrowsersFactory {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            System.err.println(file.getAbsolutePath());
+            logger.error(file.getAbsolutePath());
         }
     }
 
