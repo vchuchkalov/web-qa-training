@@ -1,4 +1,5 @@
 
+import net.lightbody.bmp.BrowserMobProxy;
 import org.junit.After;
 import org.junit.Before;
 import org.openqa.selenium.WebDriver;
@@ -16,6 +17,7 @@ public class BaseRunner {
     public static ThreadLocal<WebDriver> threadLocal = new ThreadLocal<>();
     public WebDriver driver;
     public WebDriverWait wait;
+    public BrowserMobProxy proxy;
     public final String browserName = System.getProperty("browser") == null ? "chrome" : System.getProperty("browser");
 
     @Before
@@ -24,6 +26,7 @@ public class BaseRunner {
         driver = new EventFiringWebDriver(getDriver());
         ((EventFiringWebDriver) driver).register(new BrowsersFactory.MyListener());
         threadLocal.set(driver);
+        proxy = BrowsersFactory.proxy;
         wait = new WebDriverWait(driver, 10);
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         driver.manage().window().maximize();
