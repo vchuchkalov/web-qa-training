@@ -1,5 +1,4 @@
 
-import net.lightbody.bmp.BrowserMobProxy;
 import org.junit.After;
 import org.junit.Before;
 import org.openqa.selenium.WebDriver;
@@ -14,31 +13,21 @@ import java.util.concurrent.TimeUnit;
  */
 public class BaseRunner {
 
-    public static ThreadLocal<WebDriver> threadLocal = new ThreadLocal<>();
-    public WebDriver driver;
-    public WebDriverWait wait;
-    public BrowserMobProxy proxy;
-    public final String browserName = System.getProperty("browser") == null ? "chrome" : System.getProperty("browser");
+    public static ThreadLocal<Application> tlApp = new ThreadLocal<>();
+    public Application app;
 
     @Before
     public void start() {
-        threadLocal = new ThreadLocal<>();
-        driver = new EventFiringWebDriver(getDriver());
-        ((EventFiringWebDriver) driver).register(new BrowsersFactory.MyListener());
-        threadLocal.set(driver);
-        proxy = BrowsersFactory.proxy;
-        wait = new WebDriverWait(driver, 10);
-        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-        driver.manage().window().maximize();
+        if (tlApp.get() != null) {
+            app = tlApp.get();
+            return;
+        }
+        app = new Application();
+        tlApp.set(app);
     }
 
     @After
     public void tearDown() {
-        driver.quit();
-        threadLocal.remove();
-    }
-
-    private WebDriver getDriver() {
-        return BrowsersFactory.buildDriver(browserName);
+        app.quit();
     }
 }

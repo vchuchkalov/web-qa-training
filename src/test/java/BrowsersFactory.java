@@ -1,7 +1,4 @@
 import com.google.common.io.Files;
-import net.lightbody.bmp.BrowserMobProxy;
-import net.lightbody.bmp.BrowserMobProxyServer;
-import net.lightbody.bmp.client.ClientUtil;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -49,8 +46,6 @@ public class BrowsersFactory {
         }
     }
 
-    public static BrowserMobProxy proxy;
-
     static WebDriver buildDriver(String browserName) {
         switch (browserName) {
 
@@ -72,18 +67,9 @@ public class BrowsersFactory {
             default:
                 ChromeOptions options = new ChromeOptions();
                 options.addArguments("--disable-notifications");
-
-                // start the proxy
-                proxy = new BrowserMobProxyServer();
-                proxy.start(0);
-
-                // get the Selenium proxy object
-                Proxy seleniumProxy = ClientUtil.createSeleniumProxy(proxy);
-
                 LoggingPreferences logPrefs = new LoggingPreferences();
                 logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
                 options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
-                options.setCapability(CapabilityType.PROXY, seleniumProxy);
                 return new ChromeDriver(options);
         }
     }
