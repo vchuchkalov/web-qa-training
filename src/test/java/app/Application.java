@@ -17,6 +17,7 @@ import test.BrowsersFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.management.GarbageCollectorMXBean;
+import java.net.MalformedURLException;
 import java.net.URLDecoder;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ public class Application {
     public final String browserName = System.getProperty("browser") == null ? "chrome" : System.getProperty("browser");
 
 
-    public Application() {
+    public Application() throws MalformedURLException {
         driver = new EventFiringWebDriver(getDriver());
         ((EventFiringWebDriver) driver).register(new BrowsersFactory.MyListener());
         wait = new WebDriverWait(driver, 10);
@@ -55,7 +56,7 @@ public class Application {
         driver = null;
     }
 
-    private WebDriver getDriver() {
+    private WebDriver getDriver() throws MalformedURLException {
         return BrowsersFactory.buildDriver(browserName);
     }
 

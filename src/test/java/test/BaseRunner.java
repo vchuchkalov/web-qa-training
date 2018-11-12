@@ -4,6 +4,8 @@ import app.Application;
 import org.junit.After;
 import org.junit.Before;
 
+import java.net.MalformedURLException;
+
 
 /**
  * Created by Иван on 17.03.2018.
@@ -14,7 +16,7 @@ public class BaseRunner {
     public Application app;
 
     @Before
-    public void start() {
+    public void start() throws MalformedURLException {
         if (tlApp.get() != null) {
             app = tlApp.get();
             return;
