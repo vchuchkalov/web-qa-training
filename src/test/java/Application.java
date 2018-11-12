@@ -40,8 +40,9 @@ public class Application {
         driver = null;
     }
 
-    public void getPage(String url) {
+    public Application getPage(String url) {
         driver.navigate().to(url);
+        return this;
     }
 
     public boolean isLoadedByTitleContains(String substring) {
@@ -49,7 +50,7 @@ public class Application {
         return true;
     }
 
-    public void openSearchResultsPageByRequest(String request) {
+    public Application openSearchResultsPageByRequest(String request) {
         driver.findElement(By.name("q")).sendKeys(request);
         driver.findElements(By.xpath("//ul[@role='listbox']/li"));
 
@@ -71,14 +72,16 @@ public class Application {
                     //Ожидание появления заголовка
                     return d.getTitle().contains(request.toLowerCase() + " - Поиск в Google");
                 });
+        return this;
     }
 
-    public void clickSearchResultsByLinkContains(String link){
+    public Application clickSearchResultsByLinkContains(String link){
         wait.until(d -> xpathSearcherByText(link).size() > 0);
         xpathSearcherByText(link).get(0).click();
+        return this;
     }
 
-    public void switchToWindow(String windowName){
+    public Application switchToWindow(String windowName){
         wait.until(d -> {
             boolean check = false;
             for (String title : driver.getWindowHandles()) {
@@ -88,9 +91,10 @@ public class Application {
             }
             return check;
         });
+        return this;
     }
 
-    public void typeNameField(String value){
+    public Application typeNameField(String value){
         //Заполняем форму максиально быстро, пытаясь игнорировать анимацию страницы
         wait.ignoring(StaleElementReferenceException.class)
                 .ignoring(ElementNotInteractableException.class)
@@ -99,43 +103,48 @@ public class Application {
                     driver.findElement(By.name("email")).click();
                     return true;
                 });
+        return this;
     }
 
-    public boolean checkPopularNameRequest(String surname) {
-        boolean match = false;
-        String messageResponse;
-        String response;
-        List<String> responseList = new ArrayList<>();
-        for (LogEntry entry : driver.manage().logs().get(LogType.PERFORMANCE)) {
-            messageResponse = entry.getMessage();
-            if (messageResponse.contains("get_popular_names") && messageResponse.contains("requestWillBeSent")) {
-                JSONObject jsonObject;
-                try {
-                    jsonObject = new JSONObject(messageResponse);
-                    response = jsonObject.getJSONObject("message").getJSONObject("params").getJSONObject("request").get("postData").toString();
-                    response = URLDecoder.decode(response, "UTF-8");
-                    logger.info(response);
-                    responseList.add(response);
-                } catch (JSONException e) {
-                    logger.error("JSONException: Ошибка преобразования JSON объекта, для получения параметров операции", e);
-                } catch (UnsupportedEncodingException e) {
-                    logger.error("UnsupportedEncodingException: Ошибка преобразования строки в utf-8", e);
-                } catch (NullPointerException e) {
-                    logger.error("NullPointerException: Метод get_popular_names не выполнился", e);
-                }
-            }
-        }
-        for (String res : responseList) {
-            if (res.contains(surname)) {
-                match = true;
-                break;
-            }
-        }
-        return match;
+    public Application checkPopularNameRequest(String surname) {
+       wait.until(d-> {
+           boolean match = false;
+           String messageResponse;
+           String response;
+           List<String> responseList = new ArrayList<>();
+           for (LogEntry entry : driver.manage().logs().get(LogType.PERFORMANCE)) {
+               messageResponse = entry.getMessage();
+               if (messageResponse.contains("get_popular_names") && messageResponse.contains("requestWillBeSent")) {
+                   JSONObject jsonObject;
+                   try {
+                       jsonObject = new JSONObject(messageResponse);
+                       response = jsonObject.getJSONObject("message").getJSONObject("params").getJSONObject("request").get("postData").toString();
+                       response = URLDecoder.decode(response, "UTF-8");
+                       logger.info(response);
+                       responseList.add(response);
+                   } catch (JSONException e) {
+                       logger.error("JSONException: Ошибка преобразования JSON объекта, для получения параметров операции", e);
+                   } catch (UnsupportedEncodingException e) {
+                       logger.error("UnsupportedEncodingException: Ошибка преобразования строки в utf-8", e);
+                   } catch (NullPointerException e) {
+                       logger.error("NullPointerException: Метод get_popular_names не выполнился", e);
+                   }
+               }
+           }
+           for (String res : responseList) {
+               if (res.contains(surname)) {
+                   match = true;
+                   break;
+               }
+           }
+           return match;
+       });
+        return this;
     }
 
-    public void switchToMainTab(){
+    public Application switchToMainTab(){
         driver.switchTo().window(driver.getWindowHandles().iterator().next());
+        return this;
     }
 
     public void inputBySearchField(String value){
@@ -168,9 +177,10 @@ public class Application {
         return driver.findElements(By.xpath(xpath));
     }
 
-    public void closeCurrentTab(){
+    public Application closeCurrentTab(){
         driver.close();
         logger.info("Закрыта активная вкладка");
+        return this;
     }
 
     private WebDriver getDriver() {
